@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, getFileUrl } from '../../utils/api';
 import Header from '../../components/layout/Header';
 import { Button, Modal } from '../../components/common/Common';
-import { Plus, Search, Phone, Mail, MapPin, Award, Edit2, Trash2, Eye, Building2 } from 'lucide-react';
+import { Plus, Search, Phone, Mail, MapPin, Award, Edit2, Trash2, Eye, Building2, FileText, Download, Calendar, Globe, Briefcase, Percent, Clock, User } from 'lucide-react';
 import './Brokers.css';
 
 const Brokers = () => {
@@ -220,35 +220,134 @@ const Brokers = () => {
 
       {/* Detail Modal */}
       <Modal isOpen={showDetail} onClose={() => setShowDetail(false)} title="Broker Details" size="lg">
-        {selectedBroker && (
+        {selectedBroker && (() => {
+          const photoUrl = getFileUrl(selectedBroker.profile_photo);
+          const mainDocUrl = getFileUrl(selectedBroker.document_path);
+          let langList = selectedBroker.languages;
+          if (typeof langList === 'string') {
+            try { langList = JSON.parse(langList); } catch { langList = langList.split(',').map(s => s.trim()).filter(Boolean); }
+          }
+          if (!Array.isArray(langList)) langList = [];
+          const extraDocs = Array.isArray(selectedBroker.documents) ? selectedBroker.documents : [];
+          const allDocs = [
+            ...(mainDocUrl ? [{ url: mainDocUrl, name: selectedBroker.document_name || 'Primary Document', type: 'primary' }] : []),
+            ...extraDocs.map(d => ({ url: getFileUrl(d.document_path), name: d.document_name || 'Document', type: d.document_type || 'other', id: d.bd_id })).filter(d => d.url),
+          ];
+          const statusColor = getStatusColor(selectedBroker.status);
+
+          return (
           <div className="broker-detail">
-            <div className="broker-detail__header">
-              <div className="broker-detail__avatar" style={{ borderColor: getStatusColor(selectedBroker.status) }}>
-                {getInitials(selectedBroker.broker_name)}
-              </div>
-              <div>
-                <h3 className="broker-detail__name">{selectedBroker.broker_name}</h3>
-                <p className="broker-detail__company"><Building2 size={14} /> {selectedBroker.company}</p>
-                <span className="broker-detail__status" style={{ color: getStatusColor(selectedBroker.status) }}>
-                  {selectedBroker.status}
-                </span>
+            {/* Hero with inline metrics */}
+            <div className="broker-detail__hero">
+              {photoUrl ? (
+                <img src={photoUrl} alt={selectedBroker.broker_name} className="broker-detail__photo" style={{ borderColor: statusColor }} />
+              ) : (
+                <div className="broker-detail__avatar" style={{ borderColor: statusColor }}>
+                  {getInitials(selectedBroker.broker_name)}
+                </div>
+              )}
+              <div className="broker-detail__hero-info">
+                <div className="broker-detail__hero-top">
+                  <h3 className="broker-detail__name">{selectedBroker.broker_name}</h3>
+                  <span className="broker-detail__status-pill" style={{ color: statusColor, background: statusColor + '15', borderColor: statusColor + '30' }}>
+                    <span className="broker-detail__status-dot" style={{ background: statusColor }} />
+                    {selectedBroker.status}
+                  </span>
+                </div>
+                <p className="broker-detail__company"><Building2 size={13} /> {selectedBroker.company || '-'}</p>
+                <div className="broker-detail__hero-meta">
+                  <span className="broker-detail__spec-pill"><Briefcase size={11} /> {selectedBroker.specialization || '-'}</span>
+                  {selectedBroker.rera_no && (
+                    <span className="broker-detail__rera-pill"><Award size={11} /> {selectedBroker.rera_no}</span>
+                  )}
+                  <span className="broker-detail__inline-metric"><Percent size={11} /> {selectedBroker.commission_percentage != null ? `${selectedBroker.commission_percentage}%` : '-'} commission</span>
+                  <span className="broker-detail__inline-metric"><Clock size={11} /> {selectedBroker.experience_years || 0}y exp</span>
+                </div>
               </div>
             </div>
-            <div className="broker-detail__grid">
-              <div className="broker-detail__item"><span className="broker-detail__label">Phone</span><span className="broker-detail__value">{selectedBroker.country_code} {selectedBroker.mobile_no}</span></div>
-              <div className="broker-detail__item"><span className="broker-detail__label">Email</span><span className="broker-detail__value">{selectedBroker.broker_email || '-'}</span></div>
-              <div className="broker-detail__item"><span className="broker-detail__label"><Award size={13} /> RERA No.</span><span className="broker-detail__value">{selectedBroker.rera_no}</span></div>
-              <div className="broker-detail__item"><span className="broker-detail__label">Specialization</span><span className="broker-detail__value">{selectedBroker.specialization || '-'}</span></div>
-              <div className="broker-detail__item"><span className="broker-detail__label">Commission</span><span className="broker-detail__value">{selectedBroker.commission_percentage}%</span></div>
-              <div className="broker-detail__item"><span className="broker-detail__label">Experience</span><span className="broker-detail__value">{selectedBroker.experience_years || 0} years</span></div>
-              <div className="broker-detail__item"><span className="broker-detail__label"><MapPin size={13} /> Location</span><span className="broker-detail__value">{selectedBroker.location || '-'}</span></div>
-              <div className="broker-detail__item"><span className="broker-detail__label">Address</span><span className="broker-detail__value">{selectedBroker.address || '-'}</span></div>
-              {selectedBroker.remark && <div className="broker-detail__item" style={{ gridColumn: '1/-1' }}><span className="broker-detail__label">Remark</span><span className="broker-detail__value">{selectedBroker.remark}</span></div>}
-              <div className="broker-detail__item"><span className="broker-detail__label">Joined</span><span className="broker-detail__value">{formatDate(selectedBroker.created_at)}</span></div>
-              {selectedBroker.license_expiry_date && <div className="broker-detail__item"><span className="broker-detail__label">License Expiry</span><span className="broker-detail__value">{formatDate(selectedBroker.license_expiry_date)}</span></div>}
+
+            {/* Compact 3-column info grid */}
+            <div className="broker-detail__info-grid">
+              <div className="broker-info-cell">
+                <Phone size={12} className="broker-info-cell__icon" />
+                <span className="broker-info-cell__label">Phone</span>
+                <span className="broker-info-cell__value">{selectedBroker.country_code} {selectedBroker.mobile_no}</span>
+              </div>
+              <div className="broker-info-cell">
+                <Mail size={12} className="broker-info-cell__icon" />
+                <span className="broker-info-cell__label">Email</span>
+                <span className="broker-info-cell__value">{selectedBroker.broker_email || '-'}</span>
+              </div>
+              <div className="broker-info-cell">
+                <MapPin size={12} className="broker-info-cell__icon" />
+                <span className="broker-info-cell__label">Location</span>
+                <span className="broker-info-cell__value">{selectedBroker.location || '-'}</span>
+              </div>
+              <div className="broker-info-cell">
+                <Calendar size={12} className="broker-info-cell__icon" />
+                <span className="broker-info-cell__label">License Expiry</span>
+                <span className="broker-info-cell__value">{formatDate(selectedBroker.license_expiry_date)}</span>
+              </div>
+              <div className="broker-info-cell">
+                <User size={12} className="broker-info-cell__icon" />
+                <span className="broker-info-cell__label">Joined</span>
+                <span className="broker-info-cell__value">{formatDate(selectedBroker.created_at)}</span>
+              </div>
+              <div className="broker-info-cell">
+                <Globe size={12} className="broker-info-cell__icon" />
+                <span className="broker-info-cell__label">Languages</span>
+                {langList.length > 0 ? (
+                  <div className="broker-detail__chips">
+                    {langList.map((l, i) => <span key={i} className="broker-detail__chip">{l}</span>)}
+                  </div>
+                ) : <span className="broker-info-cell__value">-</span>}
+              </div>
+            </div>
+
+            {/* Address full-width */}
+            <div className="broker-detail__address">
+              <span className="broker-detail__row-label"><MapPin size={11} /> Address</span>
+              <span className="broker-detail__row-value broker-detail__row-value--wrap">{selectedBroker.address || '-'}</span>
+            </div>
+
+            {/* Documents grid */}
+            <div className="broker-detail__panel">
+              <div className="broker-detail__panel-title">
+                <FileText size={13} /> Documents
+                {allDocs.length > 0 && <span className="broker-detail__count">{allDocs.length}</span>}
+              </div>
+              {allDocs.length > 0 ? (
+                <div className="broker-detail__docs-grid">
+                  {allDocs.map((d, i) => (
+                    <a key={d.id || i} href={d.url} target="_blank" rel="noopener noreferrer" className="broker-doc-card">
+                      <div className="broker-doc-card__icon"><FileText size={16} /></div>
+                      <div className="broker-doc-card__info">
+                        <span className="broker-doc-card__name">{d.name}</span>
+                        <span className="broker-doc-card__type">{d.type}</span>
+                      </div>
+                      <Download size={14} className="broker-doc-card__download" />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div className="broker-detail__empty-docs">No documents uploaded</div>
+              )}
+            </div>
+
+            {selectedBroker.remark && (
+              <div className="broker-detail__remark">
+                <span className="broker-detail__remark-label">Remark</span>
+                <span className="broker-detail__remark-text">{selectedBroker.remark}</span>
+              </div>
+            )}
+
+            <div className="modal__actions" style={{ marginTop: 4 }}>
+              <Button variant="outline" icon={Edit2} onClick={() => { setShowDetail(false); navigate(`/brokers/edit/${selectedBroker.b_id}`); }}>Edit</Button>
+              <Button variant="outline" onClick={() => setShowDetail(false)}>Close</Button>
             </div>
           </div>
-        )}
+          );
+        })()}
       </Modal>
 
       {/* Delete Confirmation */}

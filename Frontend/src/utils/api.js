@@ -26,6 +26,17 @@ export const STORAGE_KEYS = {
   CRM_SETTINGS: 'rabs_crm_settings',
 };
 
+// ─── Build absolute URL for server-hosted files (uploads, etc.) ──
+export const getFileUrl = (path) => {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  const clientData = getStoredData(STORAGE_KEYS.CLIENT_DATA);
+  if (!clientData?.apiBaseUrl) return path;
+  const base = clientData.apiBaseUrl.replace(/\/api\/?$/, '');
+  const clean = path.startsWith('/') ? path : '/' + path;
+  return base + clean;
+};
+
 // ─── Verify client code ──────────────────────────────────
 export const verifyClientCode = async (code) => {
   try {
