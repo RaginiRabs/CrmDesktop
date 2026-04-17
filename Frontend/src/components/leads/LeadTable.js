@@ -342,11 +342,29 @@ const LeadTable = ({
 
   // Bulk assign
   const openBulkAssign = async () => {
-    setBulkUserIds([]);
     setBulkStatusId('');
     setShowAssignModal(true);
     const res = await fetchUsers();
-    if (res.success) setAssignUsers(Array.isArray(res.data) ? res.data : res.data?.users || []);
+    const users = res.success ? (Array.isArray(res.data) ? res.data : res.data?.users || []) : [];
+    if (res.success) setAssignUsers(users);
+
+    const selectedLeadObjs = leads.filter(l => selectedLeads.includes(l.l_id));
+    const preChecked = new Set();
+    selectedLeadObjs.forEach(l => {
+      if (l.assigned_uids) {
+        String(l.assigned_uids).split(',').forEach(uid => {
+          const n = Number(uid);
+          if (n) preChecked.add(n);
+        });
+      } else if (l.assigned_users && users.length) {
+        const names = String(l.assigned_users).split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+        users.forEach(u => {
+          const uname = (u.username || u.name || '').toLowerCase();
+          if (uname && names.includes(uname)) preChecked.add(u.u_id);
+        });
+      }
+    });
+    setBulkUserIds([...preChecked]);
   };
   const toggleBulkUser = (uid) => {
     setBulkUserIds(prev => prev.includes(uid) ? prev.filter(id => id !== uid) : [...prev, uid]);
