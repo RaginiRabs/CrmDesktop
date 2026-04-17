@@ -79,6 +79,9 @@ const formatBudget = (val) => {
 };
 
 const getAssignedNames = (lead) => {
+  if (Array.isArray(lead.assignments) && lead.assignments.length > 0) {
+    return lead.assignments.map(a => a.assigned_to_name).filter(Boolean).join(', ');
+  }
   if (lead.assigned_users && Array.isArray(lead.assigned_users) && lead.assigned_users.length > 0) {
     return lead.assigned_users.map(u => u.name || u.username).join(', ');
   }
