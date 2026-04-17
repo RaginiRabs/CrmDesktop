@@ -702,57 +702,140 @@ const LeadTable = ({
         {selectedLead && (() => {
           const lead = viewDetail || selectedLead;
           return (
-          <div className="quick-edit__layout">
-            <div className="quick-edit__form-side" style={{ flex: 1.3 }}>
-              <div className="lead-detail__header">
-                <div className="lead-detail__avatar-lg" style={{ borderColor: getNameColor(lead), color: getNameColor(lead) }}>
+          <div className="lead-view__layout">
+            {/* Left column */}
+            <div className="lead-view__main">
+
+              {/* Identity header */}
+              <div className="lead-view__header">
+                <div className="lead-view__avatar" style={{ background: getNameColor(lead) + '18', borderColor: getNameColor(lead) + '40', color: getNameColor(lead) }}>
                   {getInitials(lead.name)}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <h3 className="lead-detail__name" style={{ color: getNameColor(lead) }}>
-                    {lead.name}
-                    {lead.is_locked ? <Lock size={14} style={{ marginLeft: 6, color: '#f59e0b' }} /> : null}
-                  </h3>
-                  <p className="lead-detail__sub">
+                <div className="lead-view__identity">
+                  <div className="lead-view__identity-top">
+                    <h3 className="lead-view__name">
+                      {lead.name}
+                      {lead.is_locked ? <Lock size={14} className="lead-view__lock-icon" /> : null}
+                    </h3>
+                    <div className="lead-view__contact-actions">
+                      <button className="lead-view__icon-btn lead-view__icon-btn--call lt-action lt-action--call" onClick={() => callLead(lead.mobile)} title="Call"><PhoneCall size={15} /></button>
+                      <button className="lead-view__icon-btn lead-view__icon-btn--email lt-action lt-action--email" onClick={() => emailLead(lead)} title="Email"><Send size={15} /></button>
+                      <button className="lead-view__icon-btn lead-view__icon-btn--share lt-action lt-action--share" onClick={() => shareLead(lead)} title="Share"><Share2 size={15} /></button>
+                    </div>
+                  </div>
+                  <p className="lead-view__sub">
                     {lead.source_name || lead.source_type || ''}
                     {lead.project_names ? ' · ' + lead.project_names : ''}
                   </p>
-                  <div style={{ marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  <div className="lead-view__badges">
                     {getLeadType(lead) && <LeadTypeBadge type={getLeadType(lead)} />}
                     <StatusBadge name={lead.status_name} color={lead.status_color} />
                     {lead.priority_name && <PriorityBadge priority={lead.priority_name} />}
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <button className="lt-action lt-action--call" onClick={() => callLead(lead.mobile)} title="Call"><PhoneCall size={16} /></button>
-                  <button className="lt-action lt-action--email" onClick={() => emailLead(lead)} title="Email"><Send size={16} /></button>
-                  <button className="lt-action lt-action--share" onClick={() => shareLead(lead)} title="Share"><Share2 size={16} /></button>
+              </div>
+
+              {/* Section: Contact */}
+              <div className="lead-view__section">
+                <h4 className="lead-view__section-title">Contact</h4>
+                <div className="lead-view__fields">
+                  <div className="lead-view__field">
+                    <span className="lead-view__field-label"><Phone size={11} /> Phone</span>
+                    <span className="lead-view__field-value">{lead.country_code ? lead.country_code + ' ' : ''}{lead.mobile || '—'}</span>
+                  </div>
+                  <div className="lead-view__field">
+                    <span className="lead-view__field-label"><Mail size={11} /> Email</span>
+                    <span className="lead-view__field-value">{lead.email || '—'}</span>
+                  </div>
+                  {lead.alt_mobile && (
+                    <div className="lead-view__field">
+                      <span className="lead-view__field-label"><Phone size={11} /> Alt Phone</span>
+                      <span className="lead-view__field-value">{lead.alt_mobile}</span>
+                    </div>
+                  )}
+                  {lead.alt_email && (
+                    <div className="lead-view__field">
+                      <span className="lead-view__field-label"><Mail size={11} /> Alt Email</span>
+                      <span className="lead-view__field-value">{lead.alt_email}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="lead-detail__grid">
-                <div className="lead-detail__item"><span className="lead-detail__label"><Phone size={12} /> Phone</span><span className="lead-detail__value">{lead.country_code} {lead.mobile}</span></div>
-                <div className="lead-detail__item"><span className="lead-detail__label"><Mail size={12} /> Email</span><span className="lead-detail__value">{lead.email || '-'}</span></div>
-                <div className="lead-detail__item"><span className="lead-detail__label">Source</span><span className="lead-detail__source-chip">{lead.source_name || lead.source_type || '-'}</span></div>
-                <div className="lead-detail__item"><span className="lead-detail__label">Buyer Type</span><span className="lead-detail__value">{lead.buyer_type || '-'}</span></div>
-                <div className="lead-detail__item"><span className="lead-detail__label">Investment</span><span className="lead-detail__value">{lead.investment_type || '-'}</span></div>
-                <div className="lead-detail__item"><span className="lead-detail__label">Assigned To</span><span className="lead-detail__value">{getAssignedNames(lead) || 'Unassigned'}</span></div>
-                {(lead.min_budget || lead.max_budget) && (
-                  <div className="lead-detail__item"><span className="lead-detail__label">Budget</span><span className="lead-detail__value">{lead.budget_currency === 'INR' ? '₹' : '$'}{lead.min_budget ? formatBudget(lead.min_budget) : '0'}{lead.max_budget ? ` - ${formatBudget(lead.max_budget)}` : ''}</span></div>
-                )}
-                {lead.project_names && <div className="lead-detail__item"><span className="lead-detail__label">Project</span><span className="lead-detail__value">{lead.project_names}</span></div>}
-                {lead.next_followup_dt && <div className="lead-detail__item"><span className="lead-detail__label"><Calendar size={12} /> Follow-up</span><span className="lead-detail__value">{formatDate(lead.next_followup_dt)}</span></div>}
-                {lead.country && <div className="lead-detail__item"><span className="lead-detail__label">Location</span><span className="lead-detail__value">{[lead.locality, lead.city, lead.state, lead.country].filter(Boolean).join(', ')}</span></div>}
-                <div className="lead-detail__item"><span className="lead-detail__label">Created</span><span className="lead-detail__value">{formatDate(lead.create_dt)}</span></div>
+              {/* Section: Requirement */}
+              <div className="lead-view__section">
+                <h4 className="lead-view__section-title">Requirement</h4>
+                <div className="lead-view__fields">
+                  <div className="lead-view__field">
+                    <span className="lead-view__field-label">Buyer Type</span>
+                    <span className="lead-view__field-value">{lead.buyer_type || '—'}</span>
+                  </div>
+                  <div className="lead-view__field">
+                    <span className="lead-view__field-label">Investment</span>
+                    <span className="lead-view__field-value">{lead.investment_type || '—'}</span>
+                  </div>
+                  {lead.project_names && (
+                    <div className="lead-view__field">
+                      <span className="lead-view__field-label">Project</span>
+                      <span className="lead-view__field-value">{lead.project_names}</span>
+                    </div>
+                  )}
+                  {(lead.min_budget || lead.max_budget) && (
+                    <div className="lead-view__field">
+                      <span className="lead-view__field-label">Budget</span>
+                      <span className="lead-view__field-value lead-view__field-value--budget">{lead.budget_currency === 'INR' ? '₹' : '$'}{lead.min_budget ? formatBudget(lead.min_budget) : '0'}{lead.max_budget ? ` – ${formatBudget(lead.max_budget)}` : ''}</span>
+                    </div>
+                  )}
+                  {(lead.locality || lead.city || lead.state || lead.country) && (
+                    <div className="lead-view__field">
+                      <span className="lead-view__field-label">Location</span>
+                      <span className="lead-view__field-value">{[lead.locality, lead.city, lead.state, lead.country].filter(Boolean).join(', ')}</span>
+                    </div>
+                  )}
+                  {lead.area && (
+                    <div className="lead-view__field">
+                      <span className="lead-view__field-label">Area</span>
+                      <span className="lead-view__field-value">{lead.area}</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
+              {/* Section: Assignment & Schedule */}
+              <div className="lead-view__section">
+                <h4 className="lead-view__section-title">Assignment &amp; Schedule</h4>
+                <div className="lead-view__fields">
+                  <div className="lead-view__field">
+                    <span className="lead-view__field-label">Assigned To</span>
+                    <span className="lead-view__field-value">{getAssignedNames(lead) || 'Unassigned'}</span>
+                  </div>
+                  <div className="lead-view__field">
+                    <span className="lead-view__field-label">Source</span>
+                    <span className="lead-view__field-value"><span className="lead-detail__source-chip">{lead.source_name || lead.source_type || '—'}</span></span>
+                  </div>
+                  {lead.next_followup_dt && (
+                    <div className="lead-view__field">
+                      <span className="lead-view__field-label"><Calendar size={11} /> Follow-up</span>
+                      <span className="lead-view__field-value">{formatDate(lead.next_followup_dt)}</span>
+                    </div>
+                  )}
+                  <div className="lead-view__field">
+                    <span className="lead-view__field-label">Created</span>
+                    <span className="lead-view__field-value">{formatDate(lead.create_dt)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Other Details */}
               {lead.other_details && (
-                <div style={{ marginTop: 14, padding: '10px 12px', background: 'var(--gray-50)', borderRadius: 8, fontSize: 13, color: 'var(--gray-600)' }}>
-                  <strong style={{ color: 'var(--gray-700)', fontSize: 12 }}>Other Details:</strong><br/>{lead.other_details}
+                <div className="lead-view__section">
+                  <h4 className="lead-view__section-title">Other Details</h4>
+                  <p className="lead-view__notes-text lead-view__notes-text--card">{lead.other_details}</p>
                 </div>
               )}
 
-              <div className="modal__actions" style={{ marginTop: 16 }}>
+              {/* Action row */}
+              <div className="lead-view__actions">
                 <Button variant="outline" icon={lead.is_locked ? Unlock : Lock} size="sm" onClick={() => { handleLock(lead, { stopPropagation: () => {} }); }}>
                   {lead.is_locked ? 'Unlock' : 'Lock'}
                 </Button>
@@ -761,15 +844,15 @@ const LeadTable = ({
               </div>
             </div>
 
-            {/* Timeline */}
-            <div className="quick-edit__timeline-side">
-              <h4 className="quick-edit__timeline-title">Activity Timeline</h4>
+            {/* Right column — Activity Timeline */}
+            <div className="lead-view__timeline">
+              <h4 className="lead-view__timeline-title">Activity Timeline</h4>
               {viewLoading ? (
-                <div className="quick-edit__timeline-loading">Loading...</div>
+                <div className="lead-view__tl-state"><span className="lead-view__tl-state-text">Loading activity...</span></div>
               ) : viewTimeline.length === 0 ? (
-                <div className="quick-edit__timeline-empty">No activity yet</div>
+                <div className="lead-view__tl-state"><span className="lead-view__tl-state-text">No activity yet</span></div>
               ) : (
-                <div className="quick-edit__timeline-list">
+                <div className="lead-view__tl-list">
                   {viewTimeline.slice(0, 20).map((item, i) => {
                     const iconMap = { comment: MessageSquare, status_update: ArrowUpCircle, followup_set: Calendar, followup_done: Calendar, followup_missed: Clock, call: PhoneCall, system: Zap, email: Mail, whatsapp: Send };
                     const IconComp = iconMap[item.activity_type] || MessageSquare;
@@ -777,11 +860,17 @@ const LeadTable = ({
                     const iconColor = colorMap[item.activity_type] || '#6b7280';
                     const tAgo = (dt) => { const m = Math.floor((Date.now() - new Date(dt)) / 60000); if (m < 1) return 'Just now'; if (m < 60) return m + 'm ago'; const h = Math.floor(m / 60); if (h < 24) return h + 'h ago'; return Math.floor(h / 24) + 'd ago'; };
                     return (
-                      <div key={item.lac_id || i} className="timeline-item">
-                        <div className="timeline-item__icon" style={{ background: iconColor + '15', color: iconColor }}><IconComp size={14} /></div>
-                        <div className="timeline-item__content">
-                          <div className="timeline-item__text">{item.comment || item.activity_type?.replace(/_/g, ' ')}</div>
-                          <div className="timeline-item__meta">{item.user_name && <span>{item.user_name}</span>}<span>{tAgo(item.create_dt)}</span></div>
+                      <div key={item.lac_id || i} className="lead-view__tl-item">
+                        <div className="lead-view__tl-connector" />
+                        <div className="lead-view__tl-icon" style={{ background: iconColor + '18', color: iconColor }}>
+                          <IconComp size={13} />
+                        </div>
+                        <div className="lead-view__tl-content">
+                          <div className="lead-view__tl-text">{item.comment || item.activity_type?.replace(/_/g, ' ')}</div>
+                          <div className="lead-view__tl-meta">
+                            {item.user_name && <span className="lead-view__tl-user">{item.user_name}</span>}
+                            <span className="lead-view__tl-time">{tAgo(item.create_dt)}</span>
+                          </div>
                         </div>
                       </div>
                     );

@@ -962,3 +962,412 @@
 
 .bulk-toolbar__btn--transfer { background: rgba(139,92,246,0.08); color: #7c3aed; }
 .bulk-toolbar__btn--transfer:hover { background: rgba(139,92,246,0.15); }
+
+/* ═══════════════════════════════════════════════════════
+   Lead View Modal — .lead-view__* scoped classes
+   These are ONLY used by the read-only Lead Details modal.
+   Quick Edit modal continues using .quick-edit__* classes.
+═══════════════════════════════════════════════════════ */
+
+/* Layout: two-column 65/35 split */
+.lead-view__layout {
+  display: flex;
+  gap: 0;
+  min-height: 400px;
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Left column */
+.lead-view__main {
+  flex: 1;
+  min-width: 0;
+  padding-right: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Identity Header ── */
+.lead-view__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.lead-view__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  border: 2.5px solid;
+  flex-shrink: 0;
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+}
+
+/* Identity block fills remaining width */
+.lead-view__identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Name row: name + action buttons on same line */
+.lead-view__identity-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lead-view__name {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--navy-800);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.lead-view__lock-icon {
+  color: var(--gold-500);
+  flex-shrink: 0;
+}
+
+/* Sub-line: source · project — wraps freely, no truncation */
+.lead-view__sub {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 4px;
+  white-space: normal;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+/* Badges row */
+.lead-view__badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  align-items: center;
+}
+
+/* Badge overrides — premium pill look for .badge (StatusBadge / PriorityBadge) */
+.lead-view__badges .badge,
+.lead-view__badges > span {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.15px;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+}
+
+/* LeadTypeBadge (.lead-type-badge) — premium pill override */
+.lead-view__badges .lead-type-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.15px;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+}
+
+/* Contact action buttons — aligned with name on right */
+.lead-view__contact-actions {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.lead-view__icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.lead-view__icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.lead-view__icon-btn--call:hover  { border-color: rgba(22,163,74,0.35);  color: rgb(22,163,74); }
+.lead-view__icon-btn--email:hover { border-color: rgba(2,132,199,0.35);   color: rgb(2,132,199); }
+.lead-view__icon-btn--share:hover { border-color: rgba(147,51,234,0.35);  color: rgb(147,51,234); }
+
+/* ── Section Cards ── */
+.lead-view__section {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.lead-view__section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--gray-500);
+  margin: 0 0 12px;
+  padding-left: 9px;
+  border-left: 3px solid var(--gold-500);
+  line-height: 1;
+}
+
+/* Fields grid — 2 columns */
+.lead-view__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+}
+
+.lead-view__field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.lead-view__field-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gray-400);
+  white-space: nowrap;
+}
+
+.lead-view__field-value {
+  font-size: 13.5px;
+  color: var(--gray-800);
+  font-weight: 500;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* Budget value — gold accent */
+.lead-view__field-value--budget {
+  color: var(--gold-700);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ── Other Details note text (inside .lead-view__section card) ── */
+.lead-view__notes-text {
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Legacy notes-block — kept for safety, not used in view modal */
+.lead-view__notes-block {
+  background: var(--gold-50);
+  border-left: 3px solid var(--gold-400);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 14px;
+}
+.lead-view__notes-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gold-700);
+  margin-bottom: 5px;
+}
+
+/* ── Action Row ── */
+.lead-view__actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════════════
+   Right column — Timeline
+═══════════════════════════ */
+.lead-view__timeline {
+  width: 300px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--gray-100);
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lead-view__timeline-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--gray-500);
+  margin: 0 0 16px;
+  padding-left: 9px;
+  border-left: 3px solid var(--gold-500);
+  line-height: 1;
+}
+
+/* Loading / empty states */
+.lead-view__tl-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.lead-view__tl-state-text {
+  font-size: 13px;
+  color: var(--gray-400);
+  font-style: italic;
+}
+
+/* Scrollable list */
+.lead-view__tl-list {
+  overflow-y: auto;
+  max-height: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  scrollbar-width: none;
+}
+.lead-view__tl-list::-webkit-scrollbar { display: none; }
+
+/* Each timeline item — no hover effects, clean and calm */
+.lead-view__tl-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 4px;
+  border-radius: var(--radius-sm);
+  position: relative;
+}
+
+/* Vertical connector — plain gray, no gradient */
+.lead-view__tl-item:not(:last-child) .lead-view__tl-connector {
+  position: absolute;
+  left: 17px;
+  top: 30px;
+  width: 1px;
+  height: calc(100% - 10px);
+  background: var(--gray-200);
+  pointer-events: none;
+}
+
+/* Icon circle — colored but no ring, no hover shadow */
+.lead-view__tl-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  margin-top: 1px;
+}
+
+/* Content */
+.lead-view__tl-content {
+  min-width: 0;
+  flex: 1;
+  padding-top: 2px;
+}
+
+.lead-view__tl-text {
+  font-size: 12.5px;
+  color: var(--gray-700);
+  line-height: 1.45;
+  word-break: break-word;
+  text-transform: capitalize;
+}
+
+.lead-view__tl-meta {
+  display: flex;
+  gap: 6px;
+  margin-top: 3px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lead-view__tl-user {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--navy-500);
+}
+
+.lead-view__tl-time {
+  font-size: 11px;
+  color: var(--gray-400);
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .lead-view__layout {
+    flex-direction: column;
+  }
+  .lead-view__main {
+    padding-right: 0;
+    padding-bottom: 20px;
+  }
+  .lead-view__timeline {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--gray-100);
+    padding-left: 0;
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lead-view__fields {
+    grid-template-columns: 1fr;
+  }
+  .lead-view__name {
+    font-size: 17px;
+  }
+  .lead-view__icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+  .lead-view__identity-top {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
