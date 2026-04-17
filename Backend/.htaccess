@@ -1,0 +1,4 @@
+# Please fill in the URLrewrite rules or custom Apache config here
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/.well-known/acme-challenge/
+RewriteRule .* - [L]

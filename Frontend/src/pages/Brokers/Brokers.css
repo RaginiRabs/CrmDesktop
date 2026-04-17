@@ -1,0 +1,89 @@
+/* ── Broker Filters ── */
+.broker-filters { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.broker-filters__search { display: flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 8px 14px; flex: 1; min-width: 250px; }
+.broker-filters__search input { border: none; outline: none; font-size: 13px; width: 100%; background: transparent; color: var(--gray-700); }
+.broker-filters__search svg { color: var(--gray-400); flex-shrink: 0; }
+.broker-filters__chips { display: flex; gap: 8px; }
+
+/* ── Broker Table ── */
+.broker-table-wrap { overflow-x: auto; background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--gray-200); }
+.broker-table { width: 100%; border-collapse: collapse; }
+.broker-table thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); background: var(--gray-50); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+.broker-table__row { transition: background 0.15s; }
+.broker-table__row:hover { background: var(--gray-50); }
+.broker-table__row td { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+.broker-table__empty { padding: 40px !important; text-align: center; color: var(--gray-400); font-size: 14px; }
+
+.broker-table__name-cell { display: flex; align-items: center; gap: 10px; }
+.broker-table__avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--navy-700); background: var(--navy-50); border: 2px solid; flex-shrink: 0; }
+.broker-table__name { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+.broker-table__contact { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--gray-600); }
+.broker-table__contact span { display: flex; align-items: center; gap: 4px; }
+.broker-table__company { font-size: 12px; color: var(--gray-700); font-weight: 500; }
+.broker-table__rera { font-size: 12px; color: var(--navy-600); font-weight: 600; font-family: monospace; }
+.broker-table__spec { font-size: 12px; color: var(--gray-500); text-transform: capitalize; }
+.broker-table__date { font-size: 12px; color: var(--gray-500); }
+
+.broker-table__status-select { border: 1px solid var(--gray-200); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 600; text-transform: capitalize; cursor: pointer; background: var(--white); outline: none; }
+
+.broker-table__actions { display: flex; gap: 6px; }
+.broker-action-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--gray-200); background: var(--white); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--gray-500); transition: all 0.15s; }
+.broker-action-btn:hover { background: var(--gray-100); color: var(--gray-700); }
+.broker-action-btn--danger:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
+
+/* ── Pagination ── */
+.broker-pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
+.broker-pagination__info { font-size: 12px; color: var(--gray-500); }
+.broker-pagination__btns { display: flex; gap: 8px; }
+.broker-pagination__btns button { padding: 6px 14px; border: 1px solid var(--gray-200); border-radius: 6px; background: var(--white); font-size: 12px; cursor: pointer; color: var(--gray-600); }
+.broker-pagination__btns button:hover:not(:disabled) { background: var(--gray-50); }
+.broker-pagination__btns button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Detail Modal ── */
+.broker-detail__header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-100); }
+.broker-detail__avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--navy-700); background: var(--navy-50); border: 3px solid; flex-shrink: 0; }
+.broker-detail__name { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.broker-detail__company { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+.broker-detail__status { font-size: 11px; font-weight: 600; text-transform: capitalize; }
+.broker-detail__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.broker-detail__item { display: flex; flex-direction: column; gap: 4px; }
+.broker-detail__label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.3px; display: flex; align-items: center; gap: 4px; }
+.broker-detail__value { font-size: 13px; color: var(--gray-700); }
+
+/* ── Add Broker Layout ── */
+.ab-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+.ab-layout__left { min-width: 0; }
+.ab-layout__right { min-width: 0; }
+
+/* ── Add Broker Form ── */
+.ab-section { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--gray-200); padding: 24px; margin-bottom: 16px; }
+.ab-section__title { font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 20px; }
+.ab-section__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ab-section__grid--full { grid-template-columns: 1fr; }
+
+.ab-field { display: flex; flex-direction: column; gap: 6px; }
+.ab-field__label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+.ab-field__req { color: #ef4444; }
+.ab-field__input { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-800); outline: none; transition: border-color 0.15s; background: var(--white); }
+.ab-field__input:focus { border-color: var(--navy-400); }
+.ab-field__input--error { border-color: #ef4444 !important; background: #fef2f2; }
+.ab-field__error { font-size: 11px; color: #ef4444; font-weight: 500; }
+.ab-field__select { appearance: auto; cursor: pointer; }
+.ab-field__textarea { resize: vertical; min-height: 70px; }
+.ab-field__phone { display: flex; gap: 8px; }
+.ab-field__code { width: 100px; padding: 9px 8px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; }
+
+.ab-upload-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 2px dashed var(--gray-300); border-radius: 10px; padding: 20px; cursor: pointer; color: var(--gray-400); font-size: 12px; transition: all 0.15s; }
+.ab-upload-box:hover { border-color: var(--navy-400); color: var(--navy-500); }
+.ab-file-preview { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); font-size: 12px; color: var(--gray-700); }
+.ab-file-preview button { border: none; background: none; cursor: pointer; color: var(--gray-400); padding: 2px; }
+.ab-file-preview button:hover { color: #ef4444; }
+
+.ab-section--sticky { position: sticky; top: 24px; }
+.ab-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+/* ── Toast ── */
+.broker-toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 500; color: white; z-index: 9999; animation: toastIn 0.3s ease; }
+.broker-toast--success { background: #22c55e; }
+.broker-toast--error { background: #ef4444; }
+@keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
