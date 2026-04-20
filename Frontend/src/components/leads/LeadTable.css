@@ -959,6 +959,8 @@
 .lt-action--delete:hover { background: rgba(220,38,38,0.08); }
 .lt-action--lock { color: #f59e0b; }
 .lt-action--lock:hover { background: rgba(245,158,11,0.08); }
+.lt-action--edit { color: #2563eb; }
+.lt-action--edit:hover { background: rgba(37, 99, 235, 0.1); }
 
 .bulk-toolbar__btn--transfer { background: rgba(139,92,246,0.08); color: #7c3aed; }
 .bulk-toolbar__btn--transfer:hover { background: rgba(139,92,246,0.15); }

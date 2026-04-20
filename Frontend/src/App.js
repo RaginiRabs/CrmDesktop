@@ -59,6 +59,7 @@ function AppContent() {
           <Route path="/leads/assigned" element={<AssignLeads />} />
           <Route path="/leads/non-assigned" element={<NonAssignLeads />} />
           <Route path="/leads/add" element={<AddLead />} />
+          <Route path="/leads/edit/:id" element={<AddLead />} />
           <Route path="/leads/status-wise" element={<StatusWiseLeads />} />
           <Route path="/projects" element={<AllProjects />} />
           <Route path="/projects/add" element={<AddProject />} />

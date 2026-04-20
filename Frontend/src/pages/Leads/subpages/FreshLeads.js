@@ -9,7 +9,7 @@ import { Button } from '../../../components/common/Common';
 
 const FreshLeads = () => {
   const navigate = useNavigate();
-  const { leads, loading, pagination, filters, setFilters, onSearch, onPageChange, refresh } = useLeads({ is_fresh: true });
+  const { leads, loading, pagination, filters, setFilters, onSearch, onPageChange, refresh } = useLeads({ is_fresh: true, is_imported: false });
 
   return (
     <div>

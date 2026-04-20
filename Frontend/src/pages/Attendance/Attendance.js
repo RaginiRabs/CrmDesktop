@@ -410,24 +410,54 @@ const Attendance = () => {
                 emptyMessage="No data found for this month"
               />
             ) : (
-              // Regular user or admin drill-down: day-by-day
-              <Table
-                columns={[
-                  {
-                    header: 'Date', render: r => (
-                      <div>
-                        <span style={{ fontSize: 13, fontWeight: 600 }}>{r.date}</span>
-                        <p style={{ fontSize: 11, color: 'var(--gray-500)', margin: 0 }}>{r.day}</p>
+              // Regular user or admin drill-down: day-by-day cards with inline sessions
+              (monthlyData?.history || []).length === 0 ? (
+                <div className="att-loading">No attendance recorded this month</div>
+              ) : (
+                <div className="att-day-list">
+                  {(monthlyData?.history || []).map(day => (
+                    <div key={day.id} className="att-day-card">
+                      <div className="att-day-card__header">
+                        <div className="att-day-card__date">
+                          <span className="att-day-card__date-main">{day.date}</span>
+                          <span className="att-day-card__date-sub">{day.day}</span>
+                        </div>
+                        <div className="att-day-card__meta">
+                          <Badge variant="default">{day.totalSessions} {day.totalSessions === 1 ? 'session' : 'sessions'}</Badge>
+                          <span className="att-day-card__hours">{day.hours}</span>
+                          <AttBadge status={day.status} />
+                        </div>
                       </div>
-                    )
-                  },
-                  { header: 'Sessions', render: r => <Badge variant="default">{r.totalSessions}</Badge> },
-                  { header: 'Hours', render: r => <span style={{ fontWeight: 600, fontSize: 13 }}>{r.hours}</span> },
-                  { header: 'Status', render: r => <AttBadge status={r.status} /> },
-                ]}
-                data={monthlyData?.history || []}
-                emptyMessage="No attendance recorded this month"
-              />
+                      {day.sessions && day.sessions.length > 0 && (
+                        <div className="att-session-list">
+                          <div className="att-session-row att-session-row--head">
+                            <span>Session</span>
+                            <span>Punch In</span>
+                            <span>Punch Out</span>
+                            <span>Duration</span>
+                            <span>Location</span>
+                          </div>
+                          {day.sessions.map((s, idx) => {
+                            const hrs = parseFloat(s.hours) || 0;
+                            const durFmt = hrs > 0
+                              ? `${Math.floor(hrs)}h ${Math.round((hrs % 1) * 60)}m`
+                              : '--';
+                            return (
+                              <div key={idx} className="att-session-row">
+                                <Badge variant="primary">#{s.session_no}</Badge>
+                                <span>{s.punchIn || s.punch_in_time || '--'}</span>
+                                <span>{s.punchOut || s.punch_out_time || '--'}</span>
+                                <span style={{ fontWeight: 600 }}>{durFmt}</span>
+                                <span className="att-session-row__loc">{s.punchInAddress || s.punch_in_address || '--'}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )
             )}
           </div>
         </div>

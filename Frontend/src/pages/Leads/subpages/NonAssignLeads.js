@@ -5,7 +5,7 @@ import LeadTable from '../../../components/leads/LeadTable';
 import useLeads from '../../../hooks/useLeads';
 
 const NonAssignLeads = () => {
-  const { leads, loading, pagination, filters, setFilters, onSearch, onPageChange, refresh } = useLeads({ assign_status: 'non_assigned' });
+  const { leads, loading, pagination, filters, setFilters, onSearch, onPageChange, refresh } = useLeads({ assign_status: 'non_assigned', is_imported: false });
 
   return (
     <div>
