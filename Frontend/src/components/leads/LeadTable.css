@@ -1196,6 +1196,40 @@
   margin: 0;
 }
 
+/* ── Documents list inside view modal ── */
+.lead-view__docs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lead-view__doc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  color: var(--navy-800);
+  font-size: 12.5px;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.lead-view__doc-item:hover {
+  background: var(--gold-50);
+  border-color: var(--gold-300);
+}
+.lead-view__doc-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lead-view__doc-ext {
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+
 /* Legacy notes-block — kept for safety, not used in view modal */
 .lead-view__notes-block {
   background: var(--gold-50);

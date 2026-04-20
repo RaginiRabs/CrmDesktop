@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCRM } from '../../context/CRMContext';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, getFileUrl } from '../../utils/api';
 import { useToast } from '../../context/ToastContext';
 import { Button, Modal, PriorityBadge } from '../common/Common';
-import { Trash2, Eye, Phone, Mail, Zap, UserCheck, Download, ChevronLeft, ChevronRight, X, PhoneCall, Send, Share2, MessageSquare, Calendar, ArrowUpCircle, Clock, CheckCircle, Settings2, GripVertical, EyeOff, Lock, Unlock, Repeat } from 'lucide-react';
+import { Trash2, Eye, Phone, Mail, Zap, UserCheck, Download, ChevronLeft, ChevronRight, X, PhoneCall, Send, Share2, MessageSquare, Calendar, ArrowUpCircle, Clock, CheckCircle, Settings2, GripVertical, EyeOff, Lock, Unlock, Repeat, Pencil, FileText, ExternalLink } from 'lucide-react';
 import './LeadTable.css';
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -13,18 +14,20 @@ const ALL_COLUMNS = [
   { id: 'contact', label: 'Contact' },
   { id: 'source', label: 'Source' },
   { id: 'status', label: 'Status' },
-  { id: 'assigned', label: 'Assigned' },
+  { id: 'assigned', label: 'Assigned To' },
+  { id: 'assigned_by', label: 'Assigned By' },
   { id: 'followup', label: 'Follow-up' },
   { id: 'budget', label: 'Budget' },
   { id: 'comments', label: 'Comments' },
   { id: 'priority', label: 'Priority' },
   { id: 'project', label: 'Project' },
   { id: 'location', label: 'Location' },
+  { id: 'created_by', label: 'Created By' },
   { id: 'date', label: 'Date' },
   { id: 'actions', label: 'Actions', fixed: true },
 ];
 
-const DEFAULT_VISIBLE = ['lead', 'contact', 'source', 'status', 'assigned', 'followup', 'budget', 'comments', 'date', 'actions'];
+const DEFAULT_VISIBLE = ['lead', 'contact', 'source', 'status', 'assigned', 'assigned_by', 'followup', 'budget', 'comments', 'created_by', 'date', 'actions'];
 const STORAGE_KEY = 'leadTableColumns';
 
 const leadTypeColors = {
@@ -136,6 +139,7 @@ const LeadTable = ({
 }) => {
   const { deleteLead, updateLeadStatus, updateLeadPriority, assignLead, fetchUsers, masterData, addComment, addFollowup, lockLead, transferLeads } = useCRM();
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
@@ -217,7 +221,7 @@ const LeadTable = ({
   const priorities = masterData?.priorities || [];
 
   const getLeadType = (lead) => {
-    if (lead.is_imported) return 'imported';
+    if (lead.is_imported || lead.source_type === 'import') return 'imported';
     if (!lead.is_viewed) return 'fresh';
     return null;
   };
@@ -527,6 +531,7 @@ const LeadTable = ({
                       <button className="lt-action lt-action--email" onClick={() => emailLead(lead)} title="Email"><Send size={15} /></button>
                       <button className="lt-action lt-action--share" onClick={() => shareLead(lead)} title="Share"><Share2 size={15} /></button>
                       <button className="lt-action lt-action--quick" onClick={(e) => openQuickEdit(lead, e)} title="Quick Edit"><Zap size={15} /></button>
+                      <button className="lt-action lt-action--edit" onClick={(e) => { e.stopPropagation(); navigate(`/leads/edit/${lead.l_id}`); }} title="Edit Lead"><Pencil size={15} /></button>
                       <button className="lt-action lt-action--lock" onClick={(e) => handleLock(lead, e)} title={lead.is_locked ? 'Unlock' : 'Lock'}>
                         {lead.is_locked ? <Unlock size={15} /> : <Lock size={15} />}
                       </button>
@@ -559,6 +564,11 @@ const LeadTable = ({
                       case 'assigned': return (
                         <td key={col.id}>
                           <span className={'lead-table__assigned' + (!assignedNames ? ' lead-table__assigned--none' : '')}>{assignedNames || 'Unassigned'}</span>
+                        </td>
+                      );
+                      case 'assigned_by': return (
+                        <td key={col.id}>
+                          <span className={'lead-table__assigned' + (!lead.assigned_by_users ? ' lead-table__assigned--none' : '')}>{lead.assigned_by_users || '-'}</span>
                         </td>
                       );
                       case 'followup': return (
@@ -616,6 +626,7 @@ const LeadTable = ({
                           <span className="lead-table__location">{[lead.city, lead.state].filter(Boolean).join(', ') || '-'}</span>
                         </td>
                       );
+                      case 'created_by': return <td key={col.id}><span className="lead-table__created-by">{lead.created_by_name || '-'}</span></td>;
                       case 'date': return <td key={col.id}><span className="lead-table__date">{formatDate(lead.create_dt)}</span></td>;
                       default: return <td key={col.id}>-</td>;
                     }
@@ -836,6 +847,39 @@ const LeadTable = ({
                   <p className="lead-view__notes-text lead-view__notes-text--card">{lead.other_details}</p>
                 </div>
               )}
+
+              {/* Documents */}
+              {(() => {
+                let docs = lead.documents;
+                if (typeof docs === 'string') {
+                  try { docs = JSON.parse(docs); } catch { docs = []; }
+                }
+                if (!Array.isArray(docs) || docs.length === 0) return null;
+                return (
+                  <div className="lead-view__section">
+                    <h4 className="lead-view__section-title">Documents</h4>
+                    <div className="lead-view__docs">
+                      {docs.map((doc, idx) => {
+                        const url = doc.path ? getFileUrl(doc.path) : null;
+                        return (
+                          <a
+                            key={idx}
+                            href={url || '#'}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="lead-view__doc-item"
+                            onClick={(e) => { if (!url) e.preventDefault(); }}
+                          >
+                            <FileText size={14} />
+                            <span className="lead-view__doc-name">{doc.name || `Document ${idx + 1}`}</span>
+                            <ExternalLink size={12} className="lead-view__doc-ext" />
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Action row */}
               <div className="lead-view__actions">
